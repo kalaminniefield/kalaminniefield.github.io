@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kala Minniefield — Business Analyst</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --coral: #FF6B6B;
+      --gold: #FFD166;
+      --teal: #06D6A0;
+      --purple: #845EC2;
+      --navy: #1A1A2E;
+      --cream: #FFF8F0;
+      --ink: #1A1A2E;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2.5rem;
+      background: rgba(255,248,240,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo span { color: var(--coral); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--coral); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 6rem 5vw 4rem;
+      gap: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      z-index: 0;
+    }
+    .blob1 { width: 500px; height: 500px; background: var(--coral); top: -100px; right: -100px; }
+    .blob2 { width: 400px; height: 400px; background: var(--teal); bottom: -80px; left: -80px; }
+    .blob3 { width: 300px; height: 300px; background: var(--gold); top: 40%; left: 30%; }
+
+    .hero-text { position: relative; z-index: 1; }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.7s ease 0.1s both;
+    }
+
+    h1 .highlight {
+      color: var(--coral);
+      position: relative;
+      display: inline-block;
+    }
+
+    h1 .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; left: 0; right: 0;
+      height: 6px;
+      background: var(--gold);
+      z-index: -1;
+      border-radius: 3px;
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: #444;
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.7s ease 0.2s both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.7s ease 0.3s both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.8rem;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+    .btn-primary { background: var(--coral); color: #fff; }
+    .btn-outline { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
+    .btn-outline:hover { background: var(--navy); color: #fff; }
+
+    /* ── HERO VISUAL ── */
+    .hero-visual {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+
+    .card-stack {
+      position: relative;
+      width: 320px;
+      height: 400px;
+    }
+
+    .profile-card {
+      position: absolute;
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+
+    .card-main {
+      width: 300px;
+      top: 20px; left: 10px;
+      z-index: 3;
+    }
+
+    .card-back1 {
+      width: 280px;
+      top: 40px; left: 30px;
+      z-index: 2;
+      background: var(--gold);
+      transform: rotate(4deg);
+    }
+
+    .card-back2 {
+      width: 280px;
+      top: 50px; left: 5px;
+      z-index: 1;
+      background: var(--teal);
+      transform: rotate(-3deg);
+    }
+
+    .avatar {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--coral), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      color: var(--coral);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .skill-pill {
+      background: var(--cream);
+      border: 1.5px solid #eee;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.25rem 0.7rem;
+      color: var(--ink);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 5rem 5vw;
+      position: relative;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 900;
+      margin-bottom: 3rem;
+      line-height: 1.15;
+    }
+
+    /* ── SKILLS ── */
+    .skills-section { background: var(--navy); color: white; }
+    .skills-section .section-label { color: var(--gold); }
+    .skills-section .section-title { color: white; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skill-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 1.8rem;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .skill-card:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-4px);
+    }
+
+    .skill-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .skill-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+
+    .skill-card p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+    }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .project-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.13);
+    }
+
+    .project-header {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+    }
+
+    .ph1 { background: linear-gradient(135deg, #FF6B6B, #FFD166); }
+    .ph2 { background: linear-gradient(135deg, #06D6A0, #845EC2); }
+    .ph3 { background: linear-gradient(135deg, #845EC2, #FF6B6B); }
+
+    .project-body { padding: 1.8rem; }
+
+    .project-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.7rem;
+      border-radius: 100px;
+      margin-bottom: 0.75rem;
+    }
+
+    .tag-coral { background: #FFE8E8; color: var(--coral); }
+    .tag-teal  { background: #E0FAF4; color: #00916E; }
+    .tag-purple{ background: #EDE8F5; color: var(--purple); }
+
+    .project-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .project-body p {
+      font-size: 0.875rem;
+      color: #666;
+      line-height: 1.65;
+      margin-bottom: 1.2rem;
+    }
+
+    .project-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .tool-tag {
+      background: var(--cream);
+      border: 1.5px solid #e8e0d8;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.2rem 0.6rem;
+      color: #555;
+    }
+
+    /* ── ABOUT ── */
+    .about-section { background: var(--gold); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--navy);
+      margin-bottom: 1.2rem;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .stat-box {
+      background: white;
+      border-radius: 20px;
+      padding: 1.8rem;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--coral);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      background: var(--navy);
+      color: white;
+      text-align: center;
+    }
+
+    .contact-section .section-title { color: white; }
+    .contact-section .section-label { color: var(--teal); }
+
+    .contact-desc {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .contact-link:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .cl-email { background: var(--coral); color: white; }
+    .cl-linkedin { background: #0077B5; color: white; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0f0f1e;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+    }
+
+    footer span { color: var(--coral); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero-desc { margin: 0 auto 2rem; }
+      .hero-btns { justify-content: center; }
+      .hero-visual { display: none; }
+      .about-grid { grid-template-columns: 1fr; }
+      nav ul { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Kala <span>M.</span></div>
+  <ul>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob blob1"></div>
+  <div class="hero-blob blob2"></div>
+  <div class="hero-blob blob3"></div>
+
+  <div class="hero-text">
+    <div class="hero-tag">📍 Mobile, AL · Open to Remote</div>
+    <h1>Hi, I'm <span class="highlight">Kala</span> Minniefield.</h1>
+    <p class="hero-desc">
+      An aspiring Business Analyst with a passion for turning messy processes into clear, 
+      actionable insights. I bridge the gap between people, data, and smarter decisions.
+    </p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-primary">View My Work ↓</a>
+      <a href="#contact" class="btn btn-outline">Get In Touch</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="card-stack">
+      <div class="profile-card card-back2"></div>
+      <div class="profile-card card-back1"></div>
+      <div class="profile-card card-main">
+        <div class="avatar">KM</div>
+        <div class="card-name">Kala Minniefield</div>
+        <div class="card-title">Business Analyst</div>
+        <div class="card-skills">
+          <span class="skill-pill">Process Analysis</span>
+          <span class="skill-pill">Excel</span>
+          <span class="skill-pill">Documentation</span>
+          <span class="skill-pill">Requirements</span>
+          <span class="skill-pill">Stakeholder Mgmt</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills-section" id="skills">
+  <div class="section-label">What I Bring</div>
+  <div class="section-title">Core Skills & Tools</div>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-icon">📊</div>
+      <h3>Data & Reporting</h3>
+      <p>Proficient in Microsoft Excel and Google Sheets for data organization, reporting, and basic analysis.</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📋</div>
+      <h3>Documentation</h3>
+      <p>Experienced in creating clear process documentation, SOPs, and administrative records through office work.</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🔍</div>
+      <h3>Process Improvement</h3>
+      <p>Skilled at identifying inefficiencies and recommending solutions that improve workflows and outcomes.</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">💬</div>
+      <h3>Communication</h3>
+      <p>Strong written and verbal communicator with experience managing content and stakeholder-facing correspondence.</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🗂️</div>
+      <h3>Office Suite</h3>
+      <p>Microsoft Word, Excel, PowerPoint, Google Docs, Sheets, and Slides — all part of my daily toolkit.</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📱</div>
+      <h3>Digital Literacy</h3>
+      <p>Comfortable with social media platforms, content creation, and digital tools for organizing information.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">Portfolio</div>
+  <div class="section-title">Sample Projects</div>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-header ph1">📋</div>
+      <div class="project-body">
+        <span class="project-tag tag-coral">Process Analysis</span>
+        <h3>Office Workflow Audit</h3>
+        <p>Mapped and documented a simulated office intake process, identifying 3 key bottlenecks and recommending workflow improvements to reduce processing time by 30%.</p>
+        <div class="project-tools">
+          <span class="tool-tag">Excel</span>
+          <span class="tool-tag">Process Mapping</span>
+          <span class="tool-tag">Word</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header ph2">📊</div>
+      <div class="project-body">
+        <span class="project-tag tag-teal">Data Analysis</span>
+        <h3>Sales Performance Dashboard</h3>
+        <p>Built a 6-month sales tracking dashboard for a mock tech company in Excel using SUMPRODUCT formulas, dynamic pivot tables, and charts to visualize revenue trends by product and region.</p>
+        <div class="project-tools">
+          <span class="tool-tag">Excel</span>
+          <span class="tool-tag">SUMPRODUCT</span>
+          <span class="tool-tag">Pivot Tables</span>
+          <span class="tool-tag">Data Viz</span>
+          <span class="tool-tag">KPI Reporting</span>
+        </div>
+        <a href="https://docs.google.com/spreadsheets/d/1PfQH1H__mwQxjvLc0E7vo1G9GgBPJ2Qa/edit?usp=sharing"
+           target="_blank"
+           style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:1.1rem;padding:0.6rem 1.2rem;background:var(--teal);color:#fff;border-radius:100px;font-size:0.8rem;font-weight:500;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;"
+           onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,0.15)'"
+           onmouseout="this.style.transform='';this.style.boxShadow=''">
+          ⬇️ View Project
+        </a>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header ph3">📝</div>
+      <div class="project-body">
+        <span class="project-tag tag-purple">Requirements</span>
+        <h3>Business Requirements Document</h3>
+        <p>Drafted a sample BRD for a fictional customer portal project, including stakeholder needs, functional requirements, and acceptance criteria aligned to business goals.</p>
+        <div class="project-tools">
+          <span class="tool-tag">BRD Writing</span>
+          <span class="tool-tag">Requirements</span>
+          <span class="tool-tag">Word</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-grid">
+    <div class="about-text">
+      <div class="section-label" style="color: var(--navy); opacity: 0.6;">My Story</div>
+      <div class="section-title" style="color: var(--navy);">Turning experience into opportunity.</div>
+      <p>
+        Based in Mobile, AL, I'm transitioning into the tech industry with a background in office administration and a drive to solve real business problems through data and process improvement.
+      </p>
+      <p>
+        My administrative experience taught me how organizations actually work — the paperwork, the workflows, the communication gaps. Now I'm channeling that insight into a career as a Business Analyst, where I can make those systems smarter.
+      </p>
+      <p>
+        I'm actively building my skills in business analysis, data tools, and requirements documentation — and I'm looking for my first opportunity to grow with a team that values clear thinking and fresh perspective.
+      </p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-box">
+        <span class="stat-number">3+</span>
+        <span class="stat-label">Portfolio Projects</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">2+</span>
+        <span class="stat-label">Years Admin Exp.</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">5+</span>
+        <span class="stat-label">Tools Proficient</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Remote Ready</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="section-label">Let's Connect</div>
+  <div class="section-title">Open to Opportunities</div>
+  <p class="contact-desc">
+    I'm actively looking for entry-level Business Analyst roles — remote or in the Mobile, AL area. Let's talk!
+  </p>
+  <div class="contact-links">
+    <a href="mailto:kala.minniefield@gmail.com" class="contact-link cl-email">
+      ✉️ kala.minniefield@gmail.com
+    </a>
+    <a href="https://linkedin.com" target="_blank" class="contact-link cl-linkedin">
+      💼 LinkedIn
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Kala Minniefield · Built with purpose <span>♥</span></p>
+</footer>
+
+</body>
+</html>
